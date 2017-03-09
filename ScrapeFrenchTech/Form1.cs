@@ -16,5 +16,22 @@ namespace ScrapeFrenchTech
         {
             InitializeComponent();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var doc = new HtmlDocument();
+
+
+            webBrowser1.Navigate("http://lespepitestech.com/french-tech-hub/paris-le-de-france?page=2");
+
+            webBrowser1.DocumentCompleted += WebBrowser1_DocumentCompleted;
+        }
+
+        private void WebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            HtmlDocument doc = webBrowser1.Document;
+
+            doc.
+        }
     }
 }
