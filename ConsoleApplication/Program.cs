@@ -19,20 +19,26 @@ namespace ConsoleApplication
             
 
             doc.LoadHtml(wc.DownloadString("http://lespepitestech.com/french-tech-hub/paris-le-de-france"));
-            ProcessPage(doc);
+            string str = ProcessPage(doc);
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(str);
 
             for (int i = 1; i <= 132; i ++) // 132
             {
                 doc.LoadHtml(wc.DownloadString("http://lespepitestech.com/french-tech-hub/paris-le-de-france?page=" + i));
-                ProcessPage(doc);
+                sb.Append(ProcessPage(doc));
+
+                Console.WriteLine("Processing page : " + i);
             }
 
-            Console.ReadLine();
+            System.IO.File.WriteAllText(@"C:\Temp\ProspectsFrenchTech.csv", sb.ToString(), Encoding.UTF8);
 
         }
 
-        private static void ProcessPage(HtmlDocument doc)
+        private static string ProcessPage(HtmlDocument doc)
         {
+            string str = string.Empty;
             foreach (HtmlNode n in doc.DocumentNode.SelectNodes("//div[@class='startup-entry card']"))
             {
 
@@ -42,9 +48,11 @@ namespace ConsoleApplication
                 string name = HttpUtility.HtmlDecode(startupEntry.DocumentNode.SelectSingleNode("//h3").InnerText.Trim());
                 string description = HttpUtility.HtmlDecode(startupEntry.DocumentNode.SelectSingleNode("//div[@class='s-e-slogan-c']").InnerText.Trim());
                 string url = startupEntry.DocumentNode.SelectSingleNode("//a[@class='blanklink']").Attributes["href"].Value;
+                string vote = startupEntry.DocumentNode.SelectSingleNode("//div[@class='alternate-votes-display']").InnerText;
 
-                Console.WriteLine("{0};{1};{2}", name, description, url);
+                str += string.Format("{0};{1};{2};{3}\r\n", name, description, url, vote);
             }
+            return str;
         }
     }
 }
